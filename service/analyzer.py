@@ -1,6 +1,7 @@
 from pathlib import Path
 from typing import Union
 import json
+import os
 import pickle
 from datetime import datetime, date, timedelta
 import queue
@@ -54,7 +55,7 @@ class Analyzer:
         # Load models
         #
         symbol = App.config["symbol"]
-        data_path = Path(App.config["data_folder"]) / symbol
+        data_path = os.environ.get("DATA_FOLDER", App.config["data_folder"]) +"/" + symbol
 
         model_path = Path(App.config["model_folder"])
         if not model_path.is_absolute():

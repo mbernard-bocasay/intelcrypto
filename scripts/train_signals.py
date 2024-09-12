@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 from tqdm import tqdm
-
+import os
 import numpy as np
 import pandas as pd
 
@@ -46,17 +46,17 @@ def main(config_file):
     now = datetime.now()
 
     symbol = App.config["symbol"]
-    data_path = Path(App.config["data_folder"]) / symbol
+    data_path = Path(os.path.join(os.environ.get("DATA_FOLDER", App.config["data_folder"]),symbol))
     if not data_path.is_dir():
         print(f"Data folder does not exist: {data_path}")
         return
-    out_path = Path(App.config["data_folder"]) / symbol
+    out_path = Path(os.path.join(os.environ.get("DATA_FOLDER", App.config["data_folder"]),symbol))
     out_path.mkdir(parents=True, exist_ok=True)  # Ensure that folder exists
 
     #
     # Load data with (rolling) label point-wise predictions and signals generated
     #
-    file_path = data_path / App.config.get("signal_file_name")
+    file_path = Path(os.path.join(data_path, App.config.get("signal_file_name")))
     if not file_path.exists():
         print(f"ERROR: Input file does not exist: {file_path}")
         return
@@ -213,7 +213,7 @@ def main(config_file):
     #
     # Store simulation parameters and performance
     #
-    out_path = (out_path / App.config.get("signal_models_file_name")).with_suffix(".txt").resolve()
+    out_path = Path(os.path.join(out_path,App.config.get("signal_models_file_name"))).with_suffix(".txt").resolve()
 
     if out_path.is_file():
         add_header = False

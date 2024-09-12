@@ -1,5 +1,5 @@
 from pathlib import Path
-
+import os
 import pandas as pd
 import click
 
@@ -38,9 +38,9 @@ def main(config_file):
     # Load merged data with regular time series
     #
     symbol = App.config["symbol"]
-    data_path = Path(App.config["data_folder"]) / symbol
+    data_path = Path(os.path.join(os.environ.get("DATA_FOLDER", App.config["data_folder"]),symbol))
 
-    file_path = data_path / App.config.get("feature_file_name")
+    file_path = Path(os.path.join(data_path,App.config.get("feature_file_name")))
     if not file_path.is_file():
         print(f"Data file does not exist: {file_path}")
         return

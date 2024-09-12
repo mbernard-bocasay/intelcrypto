@@ -1,5 +1,5 @@
 from datetime import datetime, date, timedelta
-
+import os
 import click
 
 import yfinance as yf
@@ -19,7 +19,7 @@ def main(config_file):
 
     time_column = App.config["time_column"]
 
-    data_path = Path(App.config["data_folder"])
+    data_path = os.environ.get("DATA_FOLDER", App.config["data_folder"])
 
     now = datetime.now()
 
@@ -38,7 +38,8 @@ def main(config_file):
 
         print(f"Start downloading '{quote}' ...")
 
-        file_path = data_path / quote
+        
+        file_path = Path(os.path.join(data_path,quote))
         file_path.mkdir(parents=True, exist_ok=True)  # Ensure that folder exists
 
         file_name = (file_path / file).with_suffix(".csv")

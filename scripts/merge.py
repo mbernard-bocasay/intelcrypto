@@ -1,6 +1,6 @@
 from datetime import timedelta, datetime, time
 from pathlib import Path
-
+import os
 import pandas as pd
 import numpy as np
 
@@ -107,7 +107,7 @@ def main(config_file):
     now = datetime.now()
 
     # Read data from input files
-    data_path = Path(App.config["data_folder"])
+    data_path = os.environ.get("DATA_FOLDER", App.config["data_folder"])
     for ds in data_sources:
         # What is want is for each source, load file into df, determine its properties (columns, start, end etc.), and then merge all these dfs
 
@@ -121,7 +121,7 @@ def main(config_file):
         if not file:
             file = quote
 
-        file_path = (data_path / quote / file).with_suffix(".csv")
+        file_path = Path(os.path.join(data_path,quote,file)).with_suffix(".csv")
         if not file_path.is_file():
             print(f"Data file does not exist: {file_path}")
             return
@@ -138,7 +138,7 @@ def main(config_file):
     #
     # Store file with features
     #
-    out_path = data_path / App.config["symbol"] / App.config.get("merge_file_name")
+    out_path = Path(os.path.join(data_path,App.config["symbol"],App.config.get("merge_file_name")))
 
     print(f"Storing output file...")
     df_out = df_out.reset_index()

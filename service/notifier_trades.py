@@ -68,7 +68,10 @@ async def send_transaction_message(transaction):
     bot_token = App.config["telegram_bot_token"]
     chat_id = App.config["telegram_chat_id"]
     try:
-        url = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=markdown&text=' + message
+        print(f"{message}")
+        url = os.environ.get("PUBLISH_URL", "http://localhost:5000")+'?message='+message
+        #url = 'http://localhost:5000?message='+message
+        #url = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=markdown&text=' + message
         response = requests.get(url)
         response_json = response.json()
         if not response_json.get('ok'):
@@ -91,7 +94,10 @@ async def send_transaction_message(transaction):
     message += f"🔸min={profit_percent_descr['min']:.2f}% 🔸median={profit_percent_descr['50%']:.2f}% 🔸max={profit_percent_descr['max']:.2f}%\n"
 
     try:
-        url = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=markdown&text=' + message
+        print(f"{message}")
+        
+        url = os.environ.get("PUBLISH_URL", "http://localhost:5000")+'?message='+message
+        #url = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=markdown&text=' + message
         response = requests.get(url)
         response_json = response.json()
         if not response_json.get('ok'):

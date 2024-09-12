@@ -1,7 +1,7 @@
 from pathlib import Path
 import click
 from tqdm import tqdm
-
+import os
 import numpy as np
 import pandas as pd
 
@@ -35,17 +35,19 @@ def main(config_file):
     now = datetime.now()
 
     symbol = App.config["symbol"]
-    data_path = Path(App.config["data_folder"]) / symbol
+    
+    data_path = Path(os.path.join(os.environ.get("DATA_FOLDER", App.config["data_folder"]),symbol))
     if not data_path.is_dir():
         print(f"Data folder does not exist: {data_path}")
         return
-    out_path = Path(App.config["data_folder"]) / symbol
+    
+    out_path = Path(os.path.join(os.environ.get("DATA_FOLDER", App.config["data_folder"]),symbol))
     out_path.mkdir(parents=True, exist_ok=True)  # Ensure that folder exists
 
     #
     # Load data with (rolling) label point-wise predictions
     #
-    file_path = data_path / App.config.get("predict_file_name")
+    file_path = Path(os.path.join(data_path,App.config.get("predict_file_name")))
     if not file_path.exists():
         print(f"ERROR: Input file does not exist: {file_path}")
         return
@@ -102,7 +104,7 @@ def main(config_file):
     #
     # Store data
     #
-    out_path = data_path / App.config.get("signal_file_name")
+    out_path = Path(os.path.join(data_path,App.config.get("signal_file_name")))
 
     print(f"Storing signals with {len(out_df)} records and {len(out_df.columns)} columns in output file {out_path}...")
     if out_path.suffix == ".parquet":

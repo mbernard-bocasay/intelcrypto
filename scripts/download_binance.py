@@ -1,6 +1,7 @@
 # IMPORTS
 import pandas as pd
 import math
+import os
 import os.path
 import json
 import time
@@ -43,7 +44,8 @@ def main(config_file):
 
     time_column = App.config["time_column"]
 
-    data_path = Path(App.config["data_folder"])
+ 
+    data_path = os.environ.get("DATA_FOLDER", App.config["data_folder"])
 
     now = datetime.now()
 
@@ -73,7 +75,7 @@ def main(config_file):
 
         print(f"Start downloading '{quote}' ...")
 
-        file_path = data_path / quote
+        file_path = Path(os.path.join(data_path,quote))
         file_path.mkdir(parents=True, exist_ok=True)  # Ensure that folder exists
 
         file_name = (file_path / ("futures" if futures else "klines")).with_suffix(".csv")

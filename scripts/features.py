@@ -1,6 +1,7 @@
 from typing import Tuple
 from pathlib import Path
 import click
+import os
 
 import numpy as np
 import pandas as pd
@@ -30,9 +31,9 @@ def main(config_file):
     # Load merged data with regular time series
     #
     symbol = App.config["symbol"]
-    data_path = Path(App.config["data_folder"]) / symbol
+    data_path = os.environ.get("DATA_FOLDER", App.config["data_folder"])  +"/" + symbol
 
-    file_path = data_path / App.config.get("merge_file_name")
+    file_path = Path(os.path.join(data_path,App.config.get("merge_file_name")))
     if not file_path.is_file():
         print(f"Data file does not exist: {file_path}")
         return
@@ -82,7 +83,7 @@ def main(config_file):
     # Store feature matrix in output file
     #
     out_file_name = App.config.get("feature_file_name")
-    out_path = (data_path / out_file_name).resolve()
+    out_path = Path(os.path.join(data_path,out_file_name)).resolve()
 
     print(f"Storing features with {len(df)} records and {len(df.columns)} columns in output file {out_path}...")
     if out_path.suffix == ".parquet":

@@ -2,7 +2,7 @@ from pathlib import Path
 from datetime import datetime, timezone, timedelta
 import click
 from tqdm import tqdm
-
+import os
 import numpy as np
 import pandas as pd
 
@@ -36,9 +36,10 @@ def main(config_file):
     # Load feature matrix
     #
     symbol = App.config["symbol"]
-    data_path = Path(App.config["data_folder"]) / symbol
+    
+    data_path = Path(os.path.join(os.environ.get("DATA_FOLDER", App.config["data_folder"]),symbol))
 
-    file_path = data_path / App.config.get("matrix_file_name")
+    file_path = Path(os.path.join(data_path,App.config.get("matrix_file_name")))
     if not file_path.is_file():
         print(f"ERROR: Input file does not exist: {file_path}")
         return
@@ -146,7 +147,7 @@ def main(config_file):
     # Store only selected original data, labels, and their predictions
     out_df = out_df.join(df[out_columns + (labels if labels_present else [])])
 
-    out_path = data_path / App.config.get("predict_file_name")
+    out_path = Path(os.path.join(data_path,App.config.get("predict_file_name")))
 
     print(f"Storing predictions with {len(out_df)} records and {len(out_df.columns)} columns in output file {out_path}...")
     if out_path.suffix == ".parquet":

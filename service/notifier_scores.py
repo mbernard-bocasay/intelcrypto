@@ -104,7 +104,10 @@ async def send_score_notification():
     chat_id = App.config["telegram_chat_id"]
 
     try:
-        url = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=markdown&text=' + message
+        print(f"{message}")
+        url = os.environ.get("PUBLISH_URL", "http://localhost:5000")+'?message='+message
+        #url = 'http://localhost:5000?message='+message
+        #url = 'https://api.telegram.org/bot' + bot_token + '/sendMessage?chat_id=' + chat_id + '&parse_mode=markdown&text=' + message
         response = requests.get(url)
         response_json = response.json()
         if not response_json.get('ok'):
